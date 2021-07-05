@@ -10,7 +10,9 @@ namespace Критический
     {
         static void Main(string[] args)
         {
-           
+            Rech r = new Rech();
+            r.naxodres();
+            Console.ReadKey();
         }
     }
 }
