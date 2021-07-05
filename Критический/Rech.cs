@@ -64,7 +64,7 @@ namespace Критический
             put();
             maxind = 0;
             max = fnlcn[0][0].length;
-            for (int i = 0; i < ret.Count; i++)
+            for (int i = 0; i < ret.Count; i++) // подсчет продолжительности
             {
                 if (FnlMv(fnlcn[i]) >= max)
                 {
@@ -152,8 +152,8 @@ namespace Критический
         public List<Rbt> RtPrs(List<Rbt> ls, string s)
         {
             List<List<Rbt>> ret = new List<List<Rbt>>();
-            string[] str1 = s.Split(';');
-            foreach (string st1 in str1)
+            string[] str1 = s.Split(';');//Строка формируется в массив
+            foreach (string st1 in str1)//доставляются до начала ветвления
             {
                 if (st1 != "")
                 {
