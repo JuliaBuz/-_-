@@ -12,7 +12,6 @@ namespace Критический
         {
             Rech r = new Rech();
             r.naxodres();
-            Console.ReadKey();
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
@@ -13,19 +12,53 @@ namespace Критический
     {
         string s = "";
         public int max, maxind;
-        public List<List<Rbt>> fnlcn = new List<List<Rbt>>();
+        public List<List<Rbt>> fnlcn = new List<List<Rbt>>();//Лист путей
         public List<Rbt> ret;
-        public List<Rbt> ls = Flrd();
+        public List<Rbt> ls = Flrd();//Начальные данные
+        /// <summary>
+        /// Создание путей
+        /// </summary>
         public void put()
         {
-            ret = ls.FindAll(x => x.point1 == ls[Minel(ls)].point1);
+            ret = ls.FindAll(x => x.point1 == ls[Minel(ls)].point1);//Точка начала
             foreach (Rbt rb in ret)
             {
                 Mv(ls, rb);
                 fnlcn.Add(RtPrs(ls, s));
                 s = "";
             }
+        } 
+        /// <summary>
+        /// Чтение данных из файла
+        /// </summary>
+        public static List<Rbt> Flrd()
+        {
+            List<Rbt> ret = new List<Rbt>();
+            try
+            {
+                using (StreamReader sr = new StreamReader(@"Vvod.csv"))
+                {
+
+                    while (sr.EndOfStream != true)
+                    {
+                        string[] str1 = sr.ReadLine().Split(';');
+                        string[] str2 = str1[0].Split('-');
+                        ret.Add(new Rbt { point1 = Convert.ToInt32(str2[0]), point2 = Convert.ToInt32(str2[1]), length = Convert.ToInt32(str1[1]) });
+                    }
+                }
+                return ret;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadKey();
+                System.Environment.Exit(0);
+                return ret;
+            }
         }
+        /// <summary>
+        /// Поиск критического пути
+        /// </summary>
         public void naxodres()
         {
             put();
@@ -41,30 +74,21 @@ namespace Критический
             }
             ViVod();
         }
-        public void ViVod()
-        {
-            using (StreamWriter sr = new StreamWriter("Otvet.csv"))
-            {
-                foreach (Rbt rb in fnlcn[maxind])
-                {
-                    sr.WriteLine(rb.point1 + " - " + rb.point2);
-                }
-                sr.WriteLine("Rasstoanie: {0}", max);
-            }
-        }
+        
 
         public struct Rbt
-        {//Точки, длина
-            public int point1;
+        {
+            public int point1;// точки
             public int point2;
-            public int length;
-
-            //Запись пути
-            public override string ToString()
+            public int length;// длина
+            public override string ToString()//Запись пути
             {
                 return point1.ToString() + " - " + point2.ToString() + " " + length.ToString();
             }
         }
+        /// <summary>
+        /// Поиск начала
+        /// </summary>
         public int Minel(List<Rbt> ls)
         {
             int min = ls[0].point1, minind = 0;
@@ -78,6 +102,9 @@ namespace Критический
             }
             return minind;
         }
+        /// <summary>
+        /// Поиск конечной точки
+        /// </summary>
         public int Maxel(List<Rbt> ls)
         {
             int min = ls[0].point2, maxind = 0;
@@ -91,6 +118,9 @@ namespace Критический
             }
             return maxind;
         }
+        /// <summary>
+        ///Проверка пути
+        /// </summary>
         public int Mv(List<Rbt> ls, Rbt minel)
         {
             {
@@ -116,20 +146,9 @@ namespace Критический
                 return ret;
             }
         }
-        public static List<Rbt> Flrd()
-        {
-            List<Rbt> ret = new List<Rbt>();
-            using (StreamReader sr = new StreamReader(@"Vvod.csv"))
-            {
-                while (sr.EndOfStream != true)
-                {
-                    string[] str1 = sr.ReadLine().Split(';');
-                    string[] str2 = str1[0].Split('-');
-                    ret.Add(new Rbt { point1 = Convert.ToInt32(str2[0]), point2 = Convert.ToInt32(str2[1]), length = Convert.ToInt32(str1[1]) });
-                }
-            }
-            return ret;
-        }
+        /// <summary>
+        /// Нахождение ветвлений
+        /// </summary>
         public List<Rbt> RtPrs(List<Rbt> ls, string s)
         {
             List<List<Rbt>> ret = new List<List<Rbt>>();
@@ -171,6 +190,9 @@ namespace Критический
             }
             return ret[maxind];
         }
+        /// <summary>
+        /// Нахождение длины пути
+        /// </summary>
         public int FnlMv(List<Rbt> ls)
         {
             int ret = 0;
@@ -180,7 +202,22 @@ namespace Критический
             }
             return ret;
         }
-
+        /// <summary>
+        /// Вывод полученных данных в файл
+        /// </summary>
+        public void ViVod()
+        {
+            using (StreamWriter sr = new StreamWriter("Otvet.csv"))
+            {
+                foreach (Rbt rb in fnlcn[maxind])
+                {
+                    sr.WriteLine(rb.point1 + " - " + rb.point2);
+                    Debug.WriteLine(rb.point1 + " - " + rb.point2);
+                }
+                sr.WriteLine("Rasstoanie: {0}", max);
+                Debug.WriteLine(max);
+            }
+        }
     }
 }
 
