@@ -12,10 +12,10 @@ namespace Критический
     public class Rech
     {
         string s = "";
-        public int max, mind;
+        public int max, maxind;
         public List<List<Rbt>> fnlcn = new List<List<Rbt>>();
         public List<Rbt> ret;
-        public  List<Rbt> ls = Flrd(path);
+        public List<Rbt> ls = Flrd();
         public void put()
         {
             ret = ls.FindAll(x => x.point1 == ls[Minel(ls)].point1);
@@ -26,6 +26,33 @@ namespace Критический
                 s = "";
             }
         }
+        public void naxodres()
+        {
+            put();
+            maxind = 0;
+            max = fnlcn[0][0].length;
+            for (int i = 0; i < ret.Count; i++)
+            {
+                if (FnlMv(fnlcn[i]) >= max)
+                {
+                    max = FnlMv(fnlcn[i]);
+                    maxind = i;
+                }
+            }
+            ViVod();
+        }
+        public void ViVod()
+        {
+            using (StreamWriter sr = new StreamWriter("Otvet.csv"))
+            {
+                foreach (Rbt rb in fnlcn[maxind])
+                {
+                    sr.WriteLine(rb.point1 + " - " + rb.point2);
+                }
+                sr.WriteLine("Rasstoanie: {0}", max);
+            }
+        }
+
         public struct Rbt
         {//Точки, длина
             public int point1;
@@ -38,7 +65,6 @@ namespace Критический
                 return point1.ToString() + " - " + point2.ToString() + " " + length.ToString();
             }
         }
-
         public int Minel(List<Rbt> ls)
         {
             int min = ls[0].point1, minind = 0;
@@ -65,33 +91,96 @@ namespace Критический
             }
             return maxind;
         }
-
-        public void ViVod()
+        public int Mv(List<Rbt> ls, Rbt minel)
         {
-            using (StreamWriter sr = new StreamWriter("Otvet.csv"))
             {
-                foreach (Rbt rb in fnlcn[maxind])
+                int ret = 0;
+                Rbt rb = ls.Find(x => x.point1 == minel.point1 && x.point2 == minel.point2);
+                s += rb.point1.ToString() + "-" + rb.point2.ToString();
+                if (rb.point2 == ls[Maxel(ls)].point2)
                 {
-                    sr.WriteLine(rb.point1 + " - " + rb.point2);
+                    s += ";";
+                    return rb.length;
                 }
-                sr.WriteLine("Rasstoanie: {0}", max);
+                else
+                {
+                    for (int i = 0; i < ls.Count; i++)
+                    {
+                        if (ls[i].point1 == rb.point2)
+                        {
+                            s += ",";
+                            ret = Mv(ls, ls[i]) + rb.length;
+                        }
+                    }
+                }
+                return ret;
             }
         }
-        public void naxodres()
+        public static List<Rbt> Flrd()
         {
-            mind = 0;
-            max = fnlcn[0][0].length;
-            ret();
+            List<Rbt> ret = new List<Rbt>();
+            using (StreamReader sr = new StreamReader(@"Vvod.csv"))
+            {
+                while (sr.EndOfStream != true)
+                {
+                    string[] str1 = sr.ReadLine().Split(';');
+                    string[] str2 = str1[0].Split('-');
+                    ret.Add(new Rbt { point1 = Convert.ToInt32(str2[0]), point2 = Convert.ToInt32(str2[1]), length = Convert.ToInt32(str1[1]) });
+                }
+            }
+            return ret;
+        }
+        public List<Rbt> RtPrs(List<Rbt> ls, string s)
+        {
+            List<List<Rbt>> ret = new List<List<Rbt>>();
+            string[] str1 = s.Split(';');
+            foreach (string st1 in str1)
+            {
+                if (st1 != "")
+                {
+                    ret.Add(new List<Rbt>());
+                    string[] str2 = st1.Split(',');
+                    foreach (string st2 in str2)
+                    {
+                        if (st2 != "")
+                        {
+                            string[] str3 = st2.Split('-');
+                            ret[ret.Count - 1].Add(ls.Find(x => x.point1 == Convert.ToInt32(str3[0]) && x.point2 == Convert.ToInt32(str3[1])));
+                        }
+                    }
+                }
+            }
             for (int i = 0; i < ret.Count; i++)
             {
-                if (FnlMv(fnlcn[i]) >= max)
+                if (i > 0)
                 {
-                    max = FnlMv(fnlcn[i]);
+                    if (ret[i][0].point1 != ret[i][ret[i].Count - 1].point2)
+                    {
+                        ret[i].InsertRange(0, ret[i - 1].FindAll(x => ret[i - 1].IndexOf(x) <= ret[i - 1].FindIndex(y => y.point2 == ret[i][0].point1)));
+                    }
+                }
+            }
+            int max = ret[0][0].length, maxind = 0;
+            for (int i = 0; i < ret.Count; i++)
+            {
+                if (FnlMv(ret[i]) >= max)
+                {
+                    max = FnlMv(ret[i]);
                     maxind = i;
                 }
             }
-            ViVod();
+            return ret[maxind];
+        }
+        public int FnlMv(List<Rbt> ls)
+        {
+            int ret = 0;
+            foreach (Rbt rb in ls)
+            {
+                ret += rb.length;
+            }
+            return ret;
         }
 
     }
 }
+

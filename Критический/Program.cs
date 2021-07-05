@@ -10,6 +10,7 @@ namespace Критический
     {
         static void Main(string[] args)
         {
+           
         }
     }
 }
