@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Критический;
 
 namespace Тестирование
 {
@@ -9,6 +10,8 @@ namespace Тестирование
         [TestMethod]
         public void TestMethod1()
         {
+            Rech r = new Rech();
+            r.
         }
     }
 }
