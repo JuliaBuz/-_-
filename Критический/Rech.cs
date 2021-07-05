@@ -38,6 +38,34 @@ namespace Критический
                 return point1.ToString() + " - " + point2.ToString() + " " + length.ToString();
             }
         }
+
+        public int Minel(List<Rbt> ls)
+        {
+            int min = ls[0].point1, minind = 0;
+            foreach (Rbt rb in ls)
+            {
+                if (rb.point1 <= min)
+                {
+                    min = rb.point1;
+                    minind = ls.IndexOf(rb);
+                }
+            }
+            return minind;
+        }
+        public int Maxel(List<Rbt> ls)
+        {
+            int min = ls[0].point2, maxind = 0;
+            foreach (Rbt rb in ls)
+            {
+                if (rb.point2 >= min)
+                {
+                    min = rb.point1;
+                    maxind = ls.IndexOf(rb);
+                }
+            }
+            return maxind;
+        }
+
         public void ViVod()
         {
             using (StreamWriter sr = new StreamWriter("Otvet.csv"))
